@@ -20,7 +20,7 @@ typedef struct s_data
 typedef struct s_philos
 {
     int     id;
-    int     last_meal;
+    long    last_meal;
     int     t_meals;
     t_data  *data;
     pthread_mutex_t *mut;
