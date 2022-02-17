@@ -55,7 +55,7 @@ int getdata(int argc, char **argv, t_data *data)
 //------------------------endof pr>
 pthread_mutex_t *forks(t_data data)
 {
-	pthread_mutex  *mutex;
+	pthread_mutex_t  *mutex;
 	int i;
 
 	i = 0;
@@ -68,14 +68,53 @@ pthread_mutex_t *forks(t_data data)
 	return (mutex);
 }
 
+t_philos *addphilos(t_data data, pthread_mutex_t *forks)
+{
+	t_philos *philos;
+	pthread_mutex_t *dead;
+	int	i;
+	long l;
+
+	pthread_mutex_init(&dead, NULL);
+	philos = malloc(sizeof(t_philos) * data.nbphilo);
+	philos->trds = malloc(sizeof(pthread_t) * data.nbphilo);
+	t = get_time_stamp() / 1000;
+	i = 0;
+	while(i < data.nbphilo)
+	{
+		philos[i].id = i;
+		philos[i].data = &data;
+		philos[i].mutex = mutex;
+		philos[i].t_meals = 0;
+		philos[i].last_meal = t;
+		philos[i].dead = &dead;
+		if(pthread_create(philos->threads + i,NULL, &dowhatphilodo ,philos[i]) != 0);
+			write(2, "Faild to creat thread\n", 22);
+		usleep(100);
+		i++;
+	}
+	return(philos);
+}
 
 int main(int argc,char **argv)
 {
 	t_data  data;
-	pthread_mutex_t *mutex;
+	pthread_mutex_t forks;
+	t_philos 	*philos;
 
 	if(getdata(argc,argv,&data) != 0)
 		return (1);
-	mutex = forks(data);
+	forks = forks(data);
 	return(0);
+	philos = addphilos(data,forks);
+	//need supervisor and philos routine
+}
+
+//-------->
+long	get_time_stamp(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * (long)1000000 + tv.tv_usec);
 }
